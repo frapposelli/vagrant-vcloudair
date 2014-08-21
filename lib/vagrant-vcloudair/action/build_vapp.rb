@@ -143,7 +143,6 @@ module VagrantPlugins
             # Fetching new vApp object to check stuff.
             new_vapp = cnx.get_vapp(vapp_id)
 
-            # FIXME: Add a lot of error handling for each step here !
             if new_vapp
               env[:ui].success("vApp #{new_vapp[:name]} successfully created.")
 
@@ -165,11 +164,17 @@ module VagrantPlugins
                   :admin_passwd_enabled => false
                 }
               )
-              cnx.wait_task_completion(set_custom)
+              wait = cnx.wait_task_completion(set_custom)
+
+              unless wait[:errormsg].nil?
+                fail Errors::ComposeVAppError, :message => wait[:errormsg]
+              end
 
             else
               env[:ui].error("vApp #{new_vapp[:name]} creation failed!")
-              raise # FIXME: error handling missing.
+              fail Errors::ComposeVAppError,
+                   :message => 'vApp created but cannot get a working id, \
+                                please report this error'
             end
 
           else
@@ -186,10 +191,14 @@ module VagrantPlugins
             @logger.info('Waiting for the recompose task to complete ...')
 
             # Wait for the task to finish.
-            cnx.wait_task_completion(recompose[:task_id])
+            wait = cnx.wait_task_completion(recompose[:task_id])
+
+            unless wait[:errormsg].nil?
+              fail Errors::ComposeVAppError, :message => wait[:errormsg]
+            end
 
             new_vapp = cnx.get_vapp(env[:machine].get_vapp_id)
-            # FIXME: Add a lot of error handling for each step here !
+
             if new_vapp
               new_vm_properties = new_vapp[:vms_hash].fetch(vm_name)
               env[:machine].id = new_vm_properties[:id]
@@ -208,11 +217,17 @@ module VagrantPlugins
                   :admin_passwd_enabled => false
                 }
               )
-              cnx.wait_task_completion(set_custom)
+              wait = cnx.wait_task_completion(set_custom)
+
+              unless wait[:errormsg].nil?
+                fail Errors::ComposeVAppError, :message => wait[:errormsg]
+              end
 
             else
               env[:ui].error("VM #{vm_name} add to #{new_vapp[:name]} failed!")
-              raise
+              fail Errors::ComposeVAppError,
+                   :message => 'vApp created but cannot get a working id, \
+                                please report this error'
             end
           end
 
