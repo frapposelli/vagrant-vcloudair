@@ -42,8 +42,7 @@ module VagrantPlugins
           rescue Exception => e
             ### When bad credentials, we get here.
             @logger.debug("Couldn't Read VM State: #{e.message}")
-            raise VagrantPlugins::VCloudAir::Errors::VCloudAirError,
-                  :message => e.message
+            raise Errors::VCloudAirGenericError, :message => e.message
           end
         end
       end

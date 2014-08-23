@@ -10,13 +10,13 @@ module VagrantPlugins
         def call(env)
           config = env[:machine].provider_config
 
-          if !config.vcloudair_cnx or !config.vcloudair_cnx.driver.auth_key
+          if !config.vcloudair_cnx || !config.vcloudair_cnx.driver.auth_key
             @logger.info('Connecting to vCloud Air...')
 
-            @logger.debug("config.cloud_id : #{config.cloud_id}") unless config.cloud_id.nil?
-            @logger.debug("config.username : #{config.username}")
-            @logger.debug('config.password : <hidden>')
-            @logger.debug("config.vdc_name : #{config.vdc_name}")
+            @logger.debug("config.cloud_id: #{config.cloud_id}") unless config.cloud_id.nil?
+            @logger.debug("config.username: #{config.username}")
+            @logger.debug('config.password: <hidden>')
+            @logger.debug("config.vdc_name: #{config.vdc_name}")
 
             # Create the vcloud-rest connection object with the configuration
             # information.
@@ -38,8 +38,7 @@ module VagrantPlugins
               )
             else
               @logger.info("Login failed in to #{config.hostname}.")
-              env[:ui].error("Login failed in to #{config.hostname}.")
-              raise
+              fail Errors::UnauthorizedAccess
             end
           else
             @logger.info('Already logged in, using current session')
@@ -48,7 +47,6 @@ module VagrantPlugins
             )
           end
           @app.call env
-
         end
       end
     end

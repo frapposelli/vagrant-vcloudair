@@ -371,7 +371,7 @@ module VagrantPlugins
 
               [Nokogiri.parse(response.body), response.headers]
             rescue SocketError, Errno::EADDRNOTAVAIL
-              raise Errors::EndpointUnavailable, :endpoint => @api_url
+              raise Errors::EndpointUnavailable
             end
           end
 
@@ -412,8 +412,7 @@ module VagrantPlugins
             api_version_supported
 
           rescue SocketError, Errno::EADDRNOTAVAIL
-            raise Errors::EndpointUnavailable,
-                  :endpoint => "#{uri.scheme}://#{uri.host}:#{uri.port}/api"
+            raise Errors::EndpointUnavailable
           end
         end
 
@@ -489,8 +488,8 @@ module VagrantPlugins
             end
 
             [Nokogiri.parse(response.body), response.headers]
-          rescue SocketError, Errno::EADDRNOTAVAIL
-            raise Errors::EndpointUnavailable, :endpoint => @api_url
+          rescue SocketError, Errno::EADDRNOTAVAIL, Errno::ETIMEDOUT
+            raise Errors::EndpointUnavailable
           end
         end
 
@@ -498,7 +497,7 @@ module VagrantPlugins
         # Upload a large file in configurable chunks, output an optional
         # progressbar
         def upload_file(upload_url, upload_file, vapp_template, config = {})
-          # Set chunksize to 1M if not specified otherwise
+          # Set chunksize to 5M if not specified otherwise
           chunk_size = (config[:chunksize] || 5_242_880)
           @logger.debug("Set chunksize to #{chunk_size} bytes")
 
@@ -514,6 +513,7 @@ module VagrantPlugins
           # FIXME: I removed the filename below because I recall a weird issue
           #        of upload failing because if a too long filename
           #        (tsugliani)
+          # => Added the filename back, needs more testing (frapposelli)
           progressbar_title = "Uploading #{file_name}"
 
           # Create a progressbar object if progress bar is enabled
@@ -578,16 +578,17 @@ module VagrantPlugins
 
             begin
 
-              # FIXME: Add debug on the return status of "connection"
-              # to enhance troubleshooting for this upload process.
-              # (tsugliani)
-              _connection = clnt.request(
+              response = clnt.request(
                 'PUT',
                 upload_request,
                 nil,
                 file_content,
                 extheader
               )
+
+              unless response.ok?
+                fail Errors::UnattendedCodeError, :message => response.status
+              end
 
               if config[:progressbar_enable] == true &&
                  upload_file_handle.size.to_i > chunk_size

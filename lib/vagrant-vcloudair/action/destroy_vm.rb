@@ -22,7 +22,7 @@ module VagrantPlugins
             "Number of VMs in the vApp: #{test_vapp[:vms_hash].count}"
           )
 
-          env[:ui].info('Destroying VM...')
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.destroy_vm'))
           vm_delete_task = cnx.delete_vm(vm_id)
           @logger.debug("VM Delete task id #{vm_delete_task}")
           cnx.wait_task_completion(vm_delete_task)

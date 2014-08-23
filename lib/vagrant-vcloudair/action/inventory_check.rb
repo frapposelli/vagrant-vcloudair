@@ -48,10 +48,10 @@ module VagrantPlugins
             }
           )
 
-          env[:ui].info(
-            "Adding [#{box_name}] to " +
-            "Catalog [#{cfg.catalog_name}]"
-          )
+          env[:ui].info(I18n.t('vagrant_vcloudair.catalog.add_to_catalog',
+                               box_name: box_name,
+                               catalog_name: cfg.catalog_name))
+
           add_ovf_to_catalog = cnx.wait_task_completion(upload_ovf)
 
           unless add_ovf_to_catalog[:errormsg].nil?
@@ -80,7 +80,8 @@ module VagrantPlugins
           cnx.wait_task_completion(catalog_creation[:task_id])
 
           @logger.debug("Catalog Creation result: #{catalog_creation.inspect}")
-          env[:ui].info("Catalog [#{cfg.catalog_name}] successfully created.")
+          env[:ui].info(I18n.t('vagrant_vcloudair.catalog.create_catalog',
+                               catalog_name: cfg.catalog_name))
 
           cfg.catalog_id = catalog_creation[:catalog_id]
         end
@@ -111,17 +112,20 @@ module VagrantPlugins
           cfg.catalog_id = cnx.get_catalog_id_by_name(cfg.org, cfg.catalog_name)
 
           if cfg.catalog_id.nil?
-            env[:ui].warn("Catalog [#{cfg.catalog_name}] does not exist!")
+            env[:ui].warn(I18n.t(
+                          'vagrant_vcloudair.catalog.nonexistant_catalog',
+                          catalog_name: cfg.catalog_name))
 
             user_input = env[:ui].ask(
-              "Would you like to create the [#{cfg.catalog_name}] catalog?\n" +
-              'Choice (yes/no): '
+              I18n.t('vagrant_vcloudair.catalog.create_catalog_ask',
+                     catalog_name: cfg.catalog_name) + ' '
             )
 
             if user_input.downcase == 'yes' || user_input.downcase == 'y'
               vcloud_create_catalog(env)
             else
-              env[:ui].error('Catalog not created, exiting...')
+              env[:ui].error(I18n.t(
+                             'vagrant_vcloudair.catalog.catalog_not_created'))
               fail Errors::WontCreate, :item => 'Catalog'
             end
           end
@@ -158,22 +162,23 @@ module VagrantPlugins
           end
 
           if !cfg.catalog_item
-            env[:ui].warn(
-              "Catalog item [#{box_name}] " +
-              "in Catalog [#{cfg.catalog_name}] does not exist!"
-            )
+            env[:ui].warn(I18n.t(
+                          'vagrant_vcloudair.catalog.nonexistant_catalog_item',
+                          catalog_item: box_name,
+                          catalog_name: cfg.catalog_name))
 
             user_input = env[:ui].ask(
-              "Would you like to upload the [#{box_name}] " +
-              "box to [#{cfg.catalog_name}] Catalog?\n" +
-              'Choice (yes/no): '
-            )
+                         I18n.t('vagrant_vcloudair.catalog.upload_ask',
+                                catalog_item: box_name,
+                                catalog_name: cfg.catalog_name) + ' ')
 
             if user_input.downcase == 'yes' || user_input.downcase == 'y'
-              env[:ui].info("Uploading [#{box_name}]...")
+              env[:ui].info(I18n.t('vagrant_vcloudair.catalog.uploading',
+                                   catalog_item: box_name))
               vcloud_upload_box(env)
             else
-              env[:ui].error('Catalog item not available, exiting...')
+              env[:ui].error(
+                I18n.t('vagrant_vcloudair.catalog.catalog_item_notavailable'))
               fail Errors::WontCreate, :item => 'Box'
             end
 
@@ -186,7 +191,7 @@ module VagrantPlugins
 
           # Test if Gateway Edge and its IP are correct
           if !cfg.vdc_edge_gateway.nil? && !cfg.vdc_edge_gateway_ip.nil?
-            env[:ui].info('Testing Network Configuration in vCloud Air...')
+            env[:ui].info(I18n.t('vagrant_vcloudair.edge.network_test'))
             # Test if Edge Gateway exists
             cnx.find_edge_gateway_id(cfg.vdc_edge_gateway, cfg.vdc_id)
             # Test if Edge Gateway IP exists

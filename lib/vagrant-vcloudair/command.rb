@@ -3,9 +3,11 @@ require 'terminal-table'
 
 module VagrantPlugins
   module VCloudAir
+    # This Class exposes an additional 'vcloudair' namespace within the vagrant
+    # command.
     class Command < Vagrant.plugin('2', :command)
       def self.synopsis
-        'namespace to interact with vCloud Air specifics [vCloud Air provider only]'
+        'namespace to interact with vCloud Air specifics [vCloud Air provider]'
       end
 
       def command_vcloud_status(cfg, vapp_id)

@@ -13,7 +13,7 @@ module VagrantPlugins
 
           vm_id = env[:machine].id
 
-          env[:ui].info('Powering on VM...')
+          env[:ui].info(I18n.t(vagrant_vcloudair.vm.poweron_vm))
           task_id = cnx.poweron_vm(vm_id)
           cnx.wait_task_completion(task_id)
 

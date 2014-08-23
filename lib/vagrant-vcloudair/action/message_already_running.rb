@@ -7,8 +7,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          # FIXME: This error should be categorized
-          env[:ui].info(I18n.t('vagrant_vcloudair.vm_already_running'))
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.vm_already_running'))
           @app.call(env)
         end
       end

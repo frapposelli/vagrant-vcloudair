@@ -13,17 +13,16 @@ module VagrantPlugins
           cfg = env[:machine].provider_config
           cnx = cfg.vcloudair_cnx.driver
 
-          env[:ui].info('Setting VM hardware...')
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.setting_vm_hardware'))
 
           set_vm_hardware = cnx.set_vm_hardware(env[:machine].id, cfg)
-          if set_vm_hardware
-            cnx.wait_task_completion(set_vm_hardware)
-          end
+          cnx.wait_task_completion(set_vm_hardware) if set_vm_hardware
 
-          env[:ui].info('Powering on VM...')
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.poweron_vm'))
 
-          if ! cfg.nested_hypervisor.nil?
-            set_vm_nested_hypervisor = cnx.set_vm_nested_hypervisor(env[:machine].id, cfg.nested_hypervisor)
+          unless cfg.nested_hypervisor.nil?
+            set_vm_nested_hypervisor = cnx.set_vm_nested_hypervisor(
+                                       env[:machine].id, cfg.nested_hypervisor)
             if set_vm_nested_hypervisor
               cnx.wait_task_completion(set_vm_nested_hypervisor)
             end

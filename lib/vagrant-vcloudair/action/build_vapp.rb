@@ -30,17 +30,6 @@ module VagrantPlugins
           if !cfg.ip_subnet.nil?
             @logger.debug("Input address: #{cfg.ip_subnet}")
 
-            begin
-              cidr = NetAddr::CIDR.create(cfg.ip_subnet)
-            rescue NetAddr::ValidationError
-              raise Errors::InvalidSubnet, :message => cfg.ip_subnet
-            end
-
-            if cidr.bits > 30
-              @logger.debug('Subnet too small!')
-              raise Errors::SubnetTooSmall, :message => cfg.ip_subnet
-            end
-
             range_addresses = cidr.range(0)
 
             @logger.debug("Range: #{range_addresses}")
@@ -109,7 +98,7 @@ module VagrantPlugins
           end
 
           if env[:machine].get_vapp_id.nil?
-            env[:ui].info('Building vApp...')
+            env[:ui].info(I18n.t('vagrant_vcloudair.vapp.build_vapp'))
 
             vapp_prefix = cfg.vapp_prefix
             vapp_prefix = 'Vagrant' if vapp_prefix.nil?
@@ -127,12 +116,6 @@ module VagrantPlugins
               network_options
             )
             @logger.debug('Launch Compose vApp...')
-            # Wait for the task to finish.
-            wait = cnx.wait_task_completion(compose[:task_id])
-
-            unless wait[:errormsg].nil?
-              fail Errors::ComposeVAppError, :message => wait[:errormsg]
-            end
 
             # Fetch thenewly created vApp ID
             vapp_id = compose[:vapp_id]
@@ -140,11 +123,19 @@ module VagrantPlugins
             # putting the vApp Id in a globally reachable var and file.
             env[:machine].vappid = vapp_id
 
+            # Wait for the task to finish.
+            wait = cnx.wait_task_completion(compose[:task_id])
+
+            unless wait[:errormsg].nil?
+              fail Errors::ComposeVAppError, :message => wait[:errormsg]
+            end
+
             # Fetching new vApp object to check stuff.
             new_vapp = cnx.get_vapp(vapp_id)
 
             if new_vapp
-              env[:ui].success("vApp #{new_vapp[:name]} successfully created.")
+              env[:ui].success(I18n.t('vagrant_vcloudair.vapp.vapp_created',
+                                      vapp_name: new_vapp[:name]))
 
               # Add the vm id as machine.id
               new_vm_properties = new_vapp[:vms_hash].fetch(vm_name)
@@ -171,14 +162,16 @@ module VagrantPlugins
               end
 
             else
-              env[:ui].error("vApp #{new_vapp[:name]} creation failed!")
+              env[:ui].error(I18n.t(
+                             'vagrant_vcloudair.vapp.vapp_creation_failed'),
+                             vapp_name: new_vapp[:name])
               fail Errors::ComposeVAppError,
                    :message => 'vApp created but cannot get a working id, \
                                 please report this error'
             end
 
           else
-            env[:ui].info('Adding VM to existing vApp...')
+            env[:ui].info(I18n.t('vagrant_vcloudair.vapp.adding_vm'))
 
             recompose = cnx.recompose_vapp_from_vm(
               env[:machine].get_vapp_id,
@@ -224,9 +217,12 @@ module VagrantPlugins
               end
 
             else
-              env[:ui].error("VM #{vm_name} add to #{new_vapp[:name]} failed!")
+              # env[:ui].error("VM #{vm_name} add to #{new_vapp[:name]} failed!")
+              env[:ui].error(I18n.t('vagrant_vcloudair.vapp.vm_add_failed',
+                                    vm_name: vm_name,
+                                    vapp_name: new_vapp[:name]))
               fail Errors::ComposeVAppError,
-                   :message => 'vApp created but cannot get a working id, \
+                   :message => 'VM added to vApp but cannot get a working id, \
                                 please report this error'
             end
           end

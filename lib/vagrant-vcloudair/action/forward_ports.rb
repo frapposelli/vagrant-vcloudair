@@ -44,10 +44,9 @@ module VagrantPlugins
 
           @env[:forwarded_ports].each do |fp|
 
-            @env[:ui].info(
-              "Forwarding Ports: VM port #{fp.guest_port} -> " +
-              "vShield Edge port #{fp.host_port}"
-            )
+            @env[:ui].info(I18n.t('vagrant_vcloudair.edge.port_forwarding',
+                                  guest_port: fp.guest_port,
+                                  host_port: fp.host_port))
 
             # Add the options to the ports array to send to the driver later
             ports << {
@@ -61,7 +60,7 @@ module VagrantPlugins
             }
           end
 
-          if !ports.empty?
+          unless ports.empty?
             # We only need to forward ports if there are any to forward
             @logger.debug("Port object to be passed: #{ports.inspect}")
             @logger.debug("Current network id #{cfg.vdc_network_id}")
@@ -99,10 +98,12 @@ module VagrantPlugins
               ports.each do |port|
                 if port[:vapp_scoped_local_id] == vm_info[:vapp_scoped_local_id] &&
                   !vapp_edge_ports_in_use.include?(port[:nat_external_port])
-                  @env[:ui].info(
-                    "Creating NAT rules on [#{cfg.vdc_edge_gateway}] " +
-                    "for IP [#{vapp_edge_ip}] port #{port[:nat_external_port]}."
-                  )
+
+                  @env[:ui].info(I18n.t(
+                                 'vagrant_vcloudair.edge.nat_rules_creation',
+                                 vdc_edge_gateway: cfg.vdc_edge_gateway,
+                                 vapp_edge_ip: vapp_edge_ip,
+                                 port: port[:nat_external_port]))
 
                   edge_ports << port[:nat_external_port]
                 end

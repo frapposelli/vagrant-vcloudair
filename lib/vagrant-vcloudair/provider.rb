@@ -26,7 +26,7 @@ module VagrantPlugins
 
         # Translate into short/long descriptions
         short = state_id.to_s.gsub('_', ' ')
-        long  = I18n.t("vagrant_vcloudair.states.#{state_id}")
+        long  = I18n.t("vagrant_vcloudair.vm.states.#{state_id}")
 
         # Return the MachineState object
         Vagrant::MachineState.new(state_id, short, long)

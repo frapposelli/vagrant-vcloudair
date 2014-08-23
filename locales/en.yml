@@ -1,93 +1,169 @@
 en:
   vagrant_vcloudair:
-    vm_not_created: "The VM has not been created"
-    will_not_destroy: "VM will not be destroyed"
-    vm_already_running: "VM is already running"
-    vm_not_running: "VM is not running"
-    vm_halted_cannot_suspend: "VM is not running or already suspended, cannot suspend it."
-    sync:
-      rsync_not_found_warning: |-
-        Warning! Folder sync disabled because the rsync binary is missing.
-        Make sure rsync is installed and the binary can be found in the PATH.
-      rsync_folder: |-
-        Rsyncing folder: %{hostpath} => %{guestpath}
-    config:
-      api_version: "Configuration must specify a vCloud Air API version (default=5.1)"
-      catalog_name: "Configuration must specify a vCloud Air Catalog (for the VM templates images)"
-      ip_dns: "DNS configuration must be specified as an Array type"
-      compute_resource: "Configuration must specify a compute resource name"
-      hostname: "Configuration must specify a vCloud Air hostname"
-      name: "Configuration must specify a VM name"
-      orgname: "Configuration must specify a vCloud Air organization"
-      password: "Configuration must specify a vCloud Air password"
-      resource_pool: "Configuration must specify a resource pool name"
-      template: "Configuration must specify a template name"
-      username: "Configuration must specify a vCloud Air username"
-      vdc_name: "Configuration must specify a vCloud Air Virtual Datacenter (Target Organization VDC)"
-      vdc_network_name: "Configuration must specify a vCloud Air Network Name"
-      mixed_bridge: "Configuration 'network_bridge' and 'vdc_edge_gateway'/'vdc_edge_gateway_ip' are mutually exclusive"
-      wrong_edge_configuration: "Configuration 'vdc_edge_gateway' and 'vdc_edge_gateway_ip' must be both specified"
-      ip_subnet_not_valid: "The specified subnet is invalid"
-      ip_subnet_too_small: "The specified subnet is too small, must contain at least 2 usable IPs (/30 or 255.255.255.252)"
-      dns_not_valid: "One or more DNS names specified are invalid"
-      dns_specified_as_subnet: "One or more DNS names are specified as subnets"
-      edge_gateway_ip_not_valid: "The Edge Gateway IP specified is not invalid"
-      edge_gateway_ip_specified_as_subnet: "The Edge Gateway IP specified is specified as subnet"
+    vapp:
+      build_vapp: |-
+        Building vApp...
+      vapp_created: |-
+        vApp %{vapp_name} successfully created.
+      vapp_creation_failed: |-
+        vApp %{vapp_name} creation failed!
+      adding_vm: |-
+        Adding VM to existing vApp...
+      vm_add_failed: |-
+        VM %{vm_name} add to %{vapp_name} failed!
+      destroy_vapp: |-
+        Destroying vApp...
+      poweroff_vapp: |-
+        Single VM left in the vApp, Powering off vApp...
+    catalog:
+      create_catalog: |-
+        Catalog [%{catalog_name}] successfully created.
+      create_catalog_ask: |-
+        Would you like to create the [#{cfg.catalog_name}] catalog?
+        Choice (yes/no): 
+      catalog_not_created: |-
+        Catalog not created, exiting...
+      add_to_catalog: |-
+        Adding [%{box_name}] to Catalog [%{catalog_name}]
+      nonexistant_catalog: |-
+        Catalog [%{catalog_name}] does not exist!
+      nonexistant_catalog_item: |-
+        Catalog item [%{catalog_item}] in Catalog [%{catalog_name}] does not exist!"
+      upload_ask: |-
+        Would you like to upload the [%{catalog_item}] box to [%{catalog_name}] Catalog?
+        Choice (yes/no):
+      uploading: |-
+        Uploading [%{catalog_item}]...
+      catalog_item_not_available: |-
+        Catalog item not available, exiting...
+    edge:
+      network_test: |-
+        Testing Network Configuration in vCloud Air...
+      removing_nat_rules: |-
+        Removing NAT rules on [%{vdc_edge_gateway}] for IP [%{vdc_edge_gateway_ip}].
+      port_forwarding: |-
+        Forwarding Ports: VM port %{guest_port} -> vShield Edge port %{host_port}
+      nat_rules_creation: |-
+        Creating NAT rules on [%{vdc_edge_gateway}] for IP [%{vapp_edge_ip}] port %{port}.
+    vm:
+      setting_vm_hardware: |-
+        Setting VM hardware...
+      poweron_vm: |-
+        Powering on VM...
+      suspend_vm: |-
+        Suspending VM...
+      vm_not_created: |-
+        The VM has not been created
+      will_not_destroy: |-
+        VM will not be destroyed
+      vm_already_running: |-
+        VM is already running
+      vm_not_running: |-
+        VM is not running
+      vm_halted_cannot_suspend: |-
+        VM is not running or already suspended, cannot suspend it.
+      ssh_announce: |-
+        External IP for %{machine_name}: %{ip}
+      destroy_vm: |-
+        Destroying VM...
+      poweroff_vm: |-
+        Powering off VM...
+      waiting_for_ssh: |-
+        Waiting for %{port_name} Access on %{external_ip}:%{external_port} ...
+      states:
+        not_created: |-
+          The environment has not yet been created. Run `vagrant up` to
+          create the environment. If a machine is not created, only the
+          default provider will be shown. So if a provider is not listed,
+          then the machine is not created for that environment.
+        suspended: |-
+          The VM is paused. To resume the VM, simply run `vagrant up`
+          or `vagrant resume`
+        stopped: |-
+          The VM is powered off. To restart the VM, simply run `vagrant up`
+        running: |-
+          The VM is running. To stop this VM, you can run `vagrant halt` to
+          shut it down forcefully, or you can run `vagrant suspend` to simply
+          suspend the virtual machine. In either case, to restart it again,
+          simply run `vagrant up`.
     errors:
-      missing_compute_resource: "Configured compute resource not found"
-      missing_datacenter: "Configured data center not found"
-      missing_resource_pool: "Configured resource pool not found"
-      missing_template: "Configured template VM could not be found"
-      vcloud_old_version: "Sorry, VMware vCloud Air API version %{version} is not supported"
-      unauthorized_access: "Access not authorized, please verify the username and password in your Vagrantfile"
-      catalog_add_error: "Impossible to add Box to Catalog, error: %{message}"
-      invalid_network_specification: "Wrong Network specification in the Vagrantfile, make sure you have access to the specified network."
-      wont_create: "User rejected creation/upload of %{item}, exiting..."
-      stop_vapp_error: "Impossible to stop vApp, could be a transient error, please try again, error: %{message}"
-      compose_vapp_error: "Impossible to compose a vApp, error: %{message}"
-      forward_port_collision: "Port collision detected, change it in the Vagrantfile or add auto_correct: true. %{guest_port} => %{host_port}"
+      missing_compute_resource: |-
+        Configured compute resource not found
+      missing_datacenter: |-
+        Configured data center not found
+      missing_resource_pool: |-
+        Configured resource pool not found
+      missing_template: |-
+        Configured template VM could not be found
+      vcloud_old_version: |-
+        Sorry, VMware vCloud Air API version %{version} is not supported
+      unauthorized_access: |-
+        Access not authorized, please verify the username and password in your
+        Vagrantfile
+      catalog_add_error: |-
+        Impossible to add Box to Catalog, error: %{message}
+      invalid_network_specification: |-
+        Wrong Network specification in the Vagrantfile, make sure you have
+        access to the specified network.
+      wont_create: |-
+        User rejected creation/upload of %{item}, exiting...
+      stop_vapp_error: |-
+        Impossible to stop vApp, could be a transient error, please try again,
+        error: %{message}
+      compose_vapp_error: |-
+        Impossible to compose a vApp, error: %{message}
       rest_errors:
-        object_not_found: "Object not found in vCloud Air, %{message}. Please report this Error."
-        invalid_config_error: "Invalid Guest Customization Specified"
-        invalid_state_error: "Invalid vApp State %{message}"
-        invalid_request_error: "Invalid request %{message}"
-        unattended_code_error: "Unattended code received %{message}"
-        endpoint_unavailable: "Can't connect to the specified endpoint %{endpoint}, please verify connectivity."
-        service_not_found: "The specified Service cannot be found, please verify your 'cloud_id' and/or 'vdc_name' parameters."
-        vdc_not_found: "The Virtual Data Center %{message} cannot be found, please verify your 'vdc_name' parameter."
-        edgegw_not_found: "The specified Edge Gateway %{message} cannot be found, please verify your 'vdc_edge_gateway' parameter."
-        edgegw_ip_not_found: "The specified Edge Gateway IP %{message} cannot be found, please verify your 'vdc_edge_gateway_ip' parameter."
-        edgegw_not_connected: "The Edge Gateway %{edge} is not connected to network %{network}, please check your Vagrantfile parameters."
-      subnet_errors:
-        invalid_subnet: "The specified subnet is invalid: %{message}"
-        subnet_too_small: "The specified subnet is too small: %{message}, must contain at least 2 usable IPs (/30 or 255.255.255.252)"
-      rsync_error: |-
-        There was an error when attempting to rsync a share folder.
-        Please inspect the error message below for more info.
+        object_not_found: |-
+          Object not found in vCloud Air, %{message}. Please report this Error.
+        invalid_config_error: |-
+          Invalid Guest Customization Specified
+        invalid_state_error: |-
+          Invalid vApp State %{message}
+        invalid_request_error: |-
+          Invalid request %{message}
+        unattended_code_error: |-
+          Unattended code received %{message}
+        endpoint_unavailable: |-
+          Can't connect to vCloud Air, please verify connectivity.
+      config:
+        username: |-
+          Configuration must specify a vCloud Air username
+        password: |-
+          Configuration must specify a vCloud Air password
+        dns_not_valid: |-
+          One or more DNS names specified are invalid
+        dns_specified_as_subnet: |-
+          One or more DNS names are specified as subnets
+        ip_dns: |-
+          DNS configuration must be specified as an Array type
+        edge_gateway_ip_not_valid: |-
+          The Edge Gateway IP specified is not invalid
+        edge_gateway_ip_specified_as_subnet: |-
+          The Edge Gateway IP specified is specified as subnet
+        ip_subnet_not_valid: |-
+          The specified subnet is invalid
+        ip_subnet_too_small: |-
+          The specified subnet is too small, must contain at least 2 usable IPs (/30 or 255.255.255.252)
+        catalog_name: |-
+          Configuration must specify a vCloud Air Catalog (for the VM templates images)
+        vdc_name: |-
+          Configuration must specify a vCloud Air Virtual Datacenter (Target Organization VDC)
+        vdc_network_name: |-
+          Configuration must specify a vCloud Air Network Name
+        mixed_bridge: |-
+          Configuration 'network_bridge' and 'vdc_edge_gateway'/'vdc_edge_gateway_ip' are mutually exclusive
+        wrong_edge_configuration: |-
+          Configuration 'vdc_edge_gateway' and 'vdc_edge_gateway_ip' must be both specified
+        service_not_found: |-
+          The specified Service cannot be found, please verify your 'cloud_id' and/or 'vdc_name' parameters.
+        vdc_not_found: |-
+          The Virtual Data Center %{message} cannot be found, please verify your 'vdc_name' parameter.
+        edgegw_not_found: |-
+          The specified Edge Gateway %{message} cannot be found, please verify your 'vdc_edge_gateway' parameter.
+        edgegw_ip_not_found: |-
+          The specified Edge Gateway IP %{message} cannot be found, please verify your 'vdc_edge_gateway_ip' parameter.
+        edgegw_not_connected: |-
+          The Edge Gateway %{edge} is not connected to network %{network}, please check your Vagrantfile parameters.
+        forward_port_collision: |-
+          Port collision detected, change it in the Vagrantfile or add auto_correct: true. %{guest_port} => %{host_port}
 
-        Host path: %{hostpath}
-        Guest path: %{guestpath}
-        Error: %{stderr}
-      mkdir_error: |-
-        There was an error when attempting to create a shared host folder.
-        Please inspect the error message below for more info.
-
-        Host path: %{hostpath}
-        Error: %{err}
-
-    states:
-      not_created: |-
-        The environment has not yet been created. Run `vagrant up` to
-        create the environment. If a machine is not created, only the
-        default provider will be shown. So if a provider is not listed,
-        then the machine is not created for that environment.
-      suspended: |-
-        The VM is paused. To resume the VM, simply run `vagrant up`
-        or `vagrant resume`
-      stopped: |-
-        The VM is powered off. To restart the VM, simply run `vagrant up`
-      running: |-
-        The VM is running. To stop this VM, you can run `vagrant halt` to
-        shut it down forcefully, or you can run `vagrant suspend` to simply
-        suspend the virtual machine. In either case, to restart it again,
-        simply run `vagrant up`.

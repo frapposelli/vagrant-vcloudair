@@ -138,8 +138,8 @@ module VagrantPlugins
       def validate(machine)
         errors = _detected_errors
 
-        errors << I18n.t('vagrant_vcloudair.config.username') if username.nil?
-        errors << I18n.t('vagrant_vcloudair.config.password') if password.nil?
+        errors << I18n.t('vagrant_vcloudair.errors.config.username') if username.nil?
+        errors << I18n.t('vagrant_vcloudair.errors.config.password') if password.nil?
 
         unless ip_dns.nil?
           if ip_dns.kind_of?(Array)
@@ -147,14 +147,14 @@ module VagrantPlugins
               begin
                 cidr = NetAddr::CIDR.create(dns)
               rescue NetAddr::ValidationError
-                errors << I18n.t('vagrant_vcloudair.config.dns_not_valid')
+                errors << I18n.t('vagrant_vcloudair.errors.config.dns_not_valid')
               end
               if cidr && cidr.bits < 32
-                errors << I18n.t('vagrant_vcloudair.config.dns_specified_as_subnet')
+                errors << I18n.t('vagrant_vcloudair.errors.config.dns_specified_as_subnet')
               end
             end
           else
-            errors << I18n.t('vagrant_vcloudair.config.ip_dns')
+            errors << I18n.t('vagrant_vcloudair.errors.config.ip_dns')
           end
         end
 
@@ -162,10 +162,10 @@ module VagrantPlugins
           begin
             cidr = NetAddr::CIDR.create(vdc_edge_gateway_ip)
           rescue NetAddr::ValidationError
-            errors << I18n.t('vagrant_vcloudair.config.edge_gateway_ip_not_valid')
+            errors << I18n.t('vagrant_vcloudair.errors.config.edge_gateway_ip_not_valid')
           end
           if cidr && cidr.bits < 32
-            errors << I18n.t('vagrant_vcloudair.config.edge_gateway_ip_specified_as_subnet')
+            errors << I18n.t('vagrant_vcloudair.errors.config.edge_gateway_ip_specified_as_subnet')
           end
         end
 
@@ -173,29 +173,29 @@ module VagrantPlugins
           begin
             cidr = NetAddr::CIDR.create(ip_subnet)
           rescue NetAddr::ValidationError
-            errors << I18n.t('vagrant_vcloudair.config.ip_subnet_not_valid')
+            errors << I18n.t('vagrant_vcloudair.errors.config.ip_subnet_not_valid')
           end
           if cidr && cidr.bits > 30
-            errors << I18n.t('vagrant_vcloudair.config.ip_subnet_too_small')
+            errors << I18n.t('vagrant_vcloudair.errors.config.ip_subnet_too_small')
           end
         end
 
         if catalog_name.nil?
-          errors << I18n.t('vagrant_vcloudair.config.catalog_name')
+          errors << I18n.t('vagrant_vcloudair.errors.config.catalog_name')
         end
 
-        errors << I18n.t('vagrant_vcloudair.config.vdc_name') if vdc_name.nil?
+        errors << I18n.t('vagrant_vcloudair.errors.config.vdc_name') if vdc_name.nil?
 
         if vdc_network_name.nil?
-          errors << I18n.t('vagrant_vcloudair.config.vdc_network_name')
+          errors << I18n.t('vagrant_vcloudair.errors.config.vdc_network_name')
         end
 
         if network_bridge == true && (!vdc_edge_gateway.nil? || !vdc_edge_gateway_ip.nil?)
-          errors << I18n.t('vagrant_vcloudair.config.mixed_bridge')
+          errors << I18n.t('vagrant_vcloudair.errors.config.mixed_bridge')
         end
 
         if (vdc_edge_gateway.nil? && !vdc_edge_gateway_ip.nil?) || (!vdc_edge_gateway.nil? && vdc_edge_gateway_ip.nil?)
-          errors << I18n.t('vagrant_vcloudair.config.wrong_edge_configuration')
+          errors << I18n.t('vagrant_vcloudair.errors.config.wrong_edge_configuration')
         end
 
         { 'VCloudAir Provider' => errors }

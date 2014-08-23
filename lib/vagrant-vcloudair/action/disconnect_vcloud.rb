@@ -10,23 +10,19 @@ module VagrantPlugins
         end
 
         def call(env)
-          begin
-            @logger.info('Disconnecting from vCloud Air...')
+          @logger.info('Disconnecting from vCloud Air...')
 
-            # Fetch the global vCloud Air connection handle
-            cnx = env[:machine].provider_config.vcloudair_cnx.driver
+          # Fetch the global vCloud Air connection handle
+          cnx = env[:machine].provider_config.vcloudair_cnx.driver
 
-            # Delete the current vCloud Air Session
-            cnx.logout
+          # Delete the current vCloud Air Session
+          cnx.logout
 
-            # If session key doesn't exist, we are disconnected
-            if !cnx.auth_key
-              @logger.info('Disconnected from vCloud Air successfully!')
-            end
-
-          rescue Exception => e
-            # Raise a properly namespaced error for Vagrant
-            raise Errors::VCloudAirError, :message => e.message
+          # If session key doesn't exist, we are disconnected
+          if !cnx.auth_key
+            @logger.info('Disconnected from vCloud Air successfully!')
+          else
+            fail Errors::VCloudAirGenericError, :message => e.message
           end
         end
       end

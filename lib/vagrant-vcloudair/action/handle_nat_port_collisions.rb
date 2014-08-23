@@ -79,16 +79,16 @@ module VagrantPlugins
             else
               # If the port is open (listening for TCP connections)
               if ports_in_use.include?(host_port)
-                if !options[:auto_correct]
-                  raise Errors::ForwardPortCollision,
-                    :guest_port => guest_port.to_s,
-                    :host_port  => host_port.to_s
+                unless options[:auto_correct]
+                  fail Errors::ForwardPortCollision,
+                       :guest_port => guest_port.to_s,
+                       :host_port  => host_port.to_s
                 end
 
                 @logger.info("Attempting to repair FP collision: #{host_port}")
 
                 repaired_port = nil
-                while !usable_ports.empty?
+                until usable_ports.empty?
                   # Attempt to repair the forwarded port
                   repaired_port = usable_ports.to_a.sort[0]
                   usable_ports.delete(repaired_port)
@@ -108,10 +108,10 @@ module VagrantPlugins
 
                 # If we have no usable ports then we can't repair
                 if !repaired_port && usable_ports.empty?
-                  raise Errors::ForwardPortAutolistEmpty,
-                        :vm_name    => env[:machine].name,
-                        :guest_port => guest_port.to_s,
-                        :host_port  => host_port.to_s
+                  fail Errors::ForwardPortAutolistEmpty,
+                       :vm_name    => env[:machine].name,
+                       :guest_port => guest_port.to_s,
+                       :host_port  => host_port.to_s
                 end
 
                 # Modify the args in place

@@ -136,8 +136,12 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-            b2.use Provision
-            b2.use SyncedFolders
+            b2.use Call, IsRunning do |env2, b3|
+              # If the VM is not running, must power on
+              b3.use action_start unless env2[:result]
+              b3.use Provision
+              b3.use SyncedFolders
+            end
           end
         end
       end

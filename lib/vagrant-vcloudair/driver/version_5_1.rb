@@ -911,10 +911,6 @@ module VagrantPlugins
           description = response.css('Description').first
           description = description.text unless description.nil?
 
-          # FIXME: What are those 2 lines for ? disabling for now (tsugliani)
-          # ip = response.css('IpAddress').first
-          # ip = ip.text unless ip.nil?
-
           vms = response.css('Children Vm')
           vms_hash = {}
 
@@ -924,7 +920,6 @@ module VagrantPlugins
             }
           end
 
-          # TODO: EXPAND INFO FROM RESPONSE
           { :name => name, :description => description, :vms_hash => vms_hash }
         end
 
@@ -933,7 +928,9 @@ module VagrantPlugins
         #
         # - vapp_id: id of the vapp to be modified
         # - network_name: name of the vapp network to be modified
-        # - config: hash with network configuration specifications, must contain an array inside :nat_rules with the nat rules to be applied.
+        # - config: hash with network configuration specifications, must
+        #   contain an array inside :nat_rules with the nat rules to be
+        #   applied.
         def set_vapp_port_forwarding_rules(vapp_id, network_name, config = {})
           builder = Nokogiri::XML::Builder.new do |xml|
           xml.NetworkConfigSection(
@@ -1069,13 +1066,13 @@ module VagrantPlugins
           nat_type = config.css('/Features/NatService/NatType').text
 
           unless fence_mode == 'natRouted'
-            raise InvalidStateError,
-                  'Invalid request because FenceMode must be natRouted.'
+            fail Errors::InvalidStateError,
+                 'Invalid request because FenceMode must be natRouted.'
           end
 
           unless nat_type == 'portForwarding'
-            raise InvalidStateError,
-                  'Invalid request because NatType must be portForwarding.'
+            fail Errors::InvalidStateError,
+                 'Invalid request because NatType must be portForwarding.'
           end
 
           nat_rules = []
@@ -1532,13 +1529,13 @@ module VagrantPlugins
           nat_type = config.css('/Features/NatService/NatType').text
 
           unless fence_mode == 'natRouted'
-            raise InvalidStateError,
-                  'Invalid request because FenceMode must be natRouted.'
+            fail Errors::InvalidStateError,
+                 'Invalid request because FenceMode must be natRouted.'
           end
 
           unless nat_type == 'portForwarding'
-            raise InvalidStateError,
-                  'Invalid request because NatType must be portForwarding.'
+            fail Errors::InvalidStateError,
+                 'Invalid request because NatType must be portForwarding.'
           end
 
           # Check the routerInfo configuration where the global external IP
@@ -1724,7 +1721,7 @@ module VagrantPlugins
               'method'  => :post,
               'command' => cancel_hook
             }
-            # No debug here (tsugliani)
+            # FIXME: No debug here (tsugliani)
             _response, _headers = send_request(params)
             raise
           end

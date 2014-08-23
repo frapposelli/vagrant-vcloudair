@@ -7,10 +7,9 @@ module VagrantPlugins
         end
 
         def call(env)
-          # FIXME: This error should be categorized
           env[:ui].info(
             I18n.t(
-              'vagrant_vcloudair.will_not_destroy',
+              'vagrant_vcloudair.vm.will_not_destroy',
               name: env[:machine].name
             )
           )

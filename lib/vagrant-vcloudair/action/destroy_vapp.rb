@@ -22,10 +22,10 @@ module VagrantPlugins
           )
 
           if cfg.vdc_edge_gateway_ip && cfg.vdc_edge_gateway
-            env[:ui].info(
-              "Removing NAT rules on [#{cfg.vdc_edge_gateway}] " +
-              "for IP [#{cfg.vdc_edge_gateway_ip}]."
-            )
+            env[:ui].info(I18n.t('vagrant_vcloudair.edge.removing_nat_rules',
+                                 vdc_edge_gateway: cfg.vdc_edge_gateway,
+                                 vdc_edge_gateway_ip: cfg.vdc_edge_gateway_ip))
+
             @logger.debug(
               "Deleting Edge Gateway rules - vdc id: #{cfg.vdc_id}"
             )
@@ -38,7 +38,7 @@ module VagrantPlugins
             cnx.wait_task_completion(edge_remove)
           end
 
-          env[:ui].info('Destroying vApp...')
+          env[:ui].info(I18n.t('vagrant_vcloudair.vapp.destroy_vapp'))
           vapp_delete_task = cnx.delete_vapp(vapp_id)
           @logger.debug("vApp Delete task id #{vapp_delete_task}")
           cnx.wait_task_completion(vapp_delete_task)

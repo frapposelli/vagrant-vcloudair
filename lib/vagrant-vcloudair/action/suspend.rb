@@ -13,7 +13,7 @@ module VagrantPlugins
 
           vm_id = env[:machine].id
 
-          env[:ui].info('Suspending VM...')
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.suspend_vm'))
           task_id = cnx.suspend_vm(vm_id)
           cnx.wait_task_completion(task_id)
 

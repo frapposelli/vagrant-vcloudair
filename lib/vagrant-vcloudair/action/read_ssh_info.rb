@@ -108,15 +108,14 @@ module VagrantPlugins
             end
           end
 
-          port_name = "SSH"
-          if @port == 5985
-            port_name = "WinRM"
-          end
+          port_name = 'SSH'
+          port_name = 'WinRM' if @port == 5985
 
           @logger.debug(
             "#{port_name} INFO: IP #{@external_ip} and Port #{@external_port}"
           )
 
+          # FIXME:
           # tsugliani: Temporary Fix for Issue #56
           # SSH unavailable makes the deployment fails.
           # Wait infinitely right now for SSH...
@@ -125,17 +124,18 @@ module VagrantPlugins
           # This should be fixed with implementing Vagrant::Util::Retryable
           # and something like:
           #
-          # retryable(:on => Vagrant::Errors::SSHSomething, :tries => 10, :sleep => 5) do
-          #   check_for_port(ip, port, "SSH", :error_class => Vagrant::Errors::SSHSomething)
+          # retryable(:on => Vagrant::SSHSomething, :tries => 10, :sleep => 5) do
+          #   check_for_port(ip, port, "SSH", :error_class => Vagrant::SSHSomething)
           # end
           #
           sleep_counter = 5
 
           if @port == 22 || @port == 5985
             while check_for_port(@external_ip, @external_port, port_name) == false
-              env[:ui].info(
-                "Waiting for #{port_name} Access on #{@external_ip}:#{@external_port} ... "
-              )
+              env[:ui].info(I18n.t('vagrant_vcloudair.vm.waiting_for_ssh',
+                                   port_name: port_name,
+                                   external_ip: @external_ip,
+                                   external_port: @external_port))
               sleep sleep_counter
               sleep_counter += 1
             end

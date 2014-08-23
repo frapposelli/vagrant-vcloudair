@@ -7,8 +7,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          # FIXME: this error should be categorized
-          env[:ui].info(I18n.t('vagrant_vcloudair.vm_not_created'))
+          env[:ui].info(I18n.t('vagrant_vcloudair.vm.vm_not_created'))
           @app.call(env)
         end
       end
