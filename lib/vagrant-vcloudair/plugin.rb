@@ -1,0 +1,111 @@
+begin
+  require 'vagrant'
+rescue LoadError
+  raise 'The Vagrant vCloud Air plugin must be run within Vagrant.'
+end
+
+if Vagrant::VERSION < '1.6.3'
+  fail 'The Vagrant vCloud Air plugin is only compatible with Vagrant 1.6.3+'
+end
+
+module VagrantPlugins
+  module VCloudAir
+    class Plugin < Vagrant.plugin('2')
+      name 'VMware vCloud Air Provider'
+      description 'Allows Vagrant to manage machines with VMware vCloud Air(R)'
+
+      config(:vcloudair, :provider) do
+        require_relative 'config'
+        Config
+      end
+
+      # We provide support for multiple box formats, including the new standard
+      # 'vmware_ovf' and the legacy 'vcloud' and 'vcenter'.
+      provider(:vcloudair, box_format: %w[vmware_ovf vcloud vcenter]) do
+        setup_logging
+        setup_i18n
+
+        # Return the provider
+        require_relative 'provider'
+        Provider
+      end
+
+      # Add vagrant share support
+      provider_capability('vcloudair', 'public_address') do
+        require_relative 'cap/public_address'
+        Cap::PublicAddress
+      end
+
+      provider_capability(:vcloudair, :forwarded_ports) do
+        require_relative 'cap/forwarded_ports'
+        Cap::ForwardedPorts
+      end
+
+      provider_capability(:vcloudair, :winrm_info) do
+        require_relative 'cap/winrm_info'
+        Cap::WinRM
+      end
+
+      provider_capability(:vcloudair, :rdp_info) do
+        require_relative 'cap/rdp_info'
+        Cap::RDP
+      end
+
+      # Added a vagrant vcloudair-status command to enhance troubleshooting and
+      # visibility.
+      command('vcloudair') do
+        require_relative 'command'
+        Command
+      end
+
+      def self.setup_i18n
+        I18n.load_path << File.expand_path('locales/en.yml', VCloudAir.source_root)
+        I18n.reload!
+      end
+
+      # This sets up our log level to be whatever VAGRANT_LOG is.
+      def self.setup_logging
+        require 'log4r'
+
+        level = nil
+        begin
+          level = Log4r.const_get(ENV['VAGRANT_LOG'].upcase)
+        rescue NameError
+          # This means that the logging constant wasn't found,
+          # which is fine. We just keep `level` as `nil`. But
+          # we tell the user.
+          level = nil
+        end
+
+        # Some constants, such as 'true' resolve to booleans, so the
+        # above error checking doesn't catch it. This will check to make
+        # sure that the log level is an integer, as Log4r requires.
+        level = nil unless level.is_a?(Integer)
+
+        # Set the logging level on all 'vagrant' namespaced
+        # logs as long as we have a valid level.
+        if level
+          logger = Log4r::Logger.new('vagrant_vcloudair')
+          logger.outputters = Log4r::Outputter.stderr
+          logger.level = level
+          # logger = nil
+        end
+      end
+    end
+
+    module Driver
+      autoload :Meta, File.expand_path('../driver/meta', __FILE__)
+      autoload :Version_5_1, File.expand_path('../driver/version_5_1', __FILE__)
+    end
+
+    module Model
+      autoload :ForwardedPort,
+               File.expand_path('../model/forwarded_port', __FILE__)
+    end
+
+    module Util
+      autoload :CompileForwardedPorts,
+               File.expand_path('../util/compile_forwarded_ports', __FILE__)
+    end
+  end
+end
