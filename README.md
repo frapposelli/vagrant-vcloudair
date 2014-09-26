@@ -4,7 +4,7 @@
 [Version 0.5.1](../../releases/tag/v0.5.1) has been released!
 -------------
 
-## Version 0.5.0 doesn't work with Vagrant 1.6.5+, another version is coming, please use Vagrant 1.6.3 in the meantime
+## Version 0.5.0 doesn't work with Vagrant 1.6.5+, please upgrade to v0.5.1 (see upgrade instructions below)
 
 We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.com/gosddc) you can use them directly or you can roll your own as you please, make sure to install VMware tools in it.
 
