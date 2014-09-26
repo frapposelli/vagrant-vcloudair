@@ -24,11 +24,14 @@ module VagrantPlugins
             dns_address2 = '8.8.4.4'
           else
             dns_address1 = NetAddr::CIDR.create(cfg.ip_dns.shift).base
-            dns_address2 = NetAddr::CIDR.create(cfg.ip_dns.shift).base
+            unless cfg.ip_dns.empty?
+              dns_address2 = NetAddr::CIDR.create(cfg.ip_dns.shift).base
+            end
           end
 
           if !cfg.ip_subnet.nil?
             @logger.debug("Input address: #{cfg.ip_subnet}")
+            cidr = NetAddr::CIDR.create(cfg.ip_subnet)
 
             range_addresses = cidr.range(0)
 
