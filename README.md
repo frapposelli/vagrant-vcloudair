@@ -1,7 +1,7 @@
 [Vagrant](http://www.vagrantup.com) provider for [VMware vCloud Air®](http://vcloud.vmware.com)
 =============
 
-[Version 0.5.0](../../releases/tag/v0.5.0) has been released!
+[Version 0.5.1](../../releases/tag/v0.5.1) has been released!
 -------------
 
 We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.com/gosddc) you can use them directly or you can roll your own as you please, make sure to install VMware tools in it.
