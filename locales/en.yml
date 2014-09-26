@@ -19,7 +19,7 @@ en:
       create_catalog: |-
         Catalog [%{catalog_name}] successfully created.
       create_catalog_ask: |-
-        Would you like to create the [#{cfg.catalog_name}] catalog?
+        Would you like to create the [%{cfg.catalog_name}] catalog?
         Choice (yes/no): 
       catalog_not_created: |-
         Catalog not created, exiting...
