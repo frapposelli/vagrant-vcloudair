@@ -1,7 +1,7 @@
 [Vagrant](http://www.vagrantup.com) provider for [VMware vCloud Air®](http://vcloud.vmware.com)
 =============
 
-[Version 0.5.0](../../releases/tag/v0.5.0) has been released!
+[Version 0.5.1](../../releases/tag/v0.5.1) has been released!
 -------------
 
 ## Version 0.5.0 doesn't work with Vagrant 1.6.5+, another version is coming, please use Vagrant 1.6.3 in the meantime
