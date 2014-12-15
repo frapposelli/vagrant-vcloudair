@@ -52,7 +52,7 @@ module VagrantPlugins
           @logger.debug('Getting edge gateway port forwarding rules...')
           edge_gateway_rules = cnx.get_edge_gateway_rules(cfg.vdc_edge_gateway,
                                                           cfg.vdc_id)
-          edge_dnat_rules = edge_gateway_rules.select {|r| (r[:rule_type] == 'DNAT' && r[:translated_ip] != vapp_edge_ip)}
+          edge_dnat_rules = edge_gateway_rules.select {|r| (r[:rule_type] == 'DNAT' && r[:translated_ip] == vapp_edge_ip)}
           edge_ports_in_use = edge_dnat_rules.map{|r| r[:original_port].to_i}.to_set
 
           @logger.debug('Getting port forwarding rules...')
