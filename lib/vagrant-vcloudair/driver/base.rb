@@ -382,6 +382,9 @@ module VagrantPlugins
           # Disable SSL cert verification
           # clnt.ssl_config.verify_mode = (OpenSSL::SSL::VERIFY_NONE)
 
+          # Set SSL proto to TLSv1
+          clnt.ssl_config.ssl_version = :TLSv1
+          
           # Suppress SSL depth message
           clnt.ssl_config.verify_callback = proc { |ok, ctx|; true }
 
@@ -423,6 +426,9 @@ module VagrantPlugins
           # Create a new HTTP client
           clnt = HTTPClient.new
 
+          # Set SSL proto to TLSv1
+          clnt.ssl_config.ssl_version = :TLSv1
+          
           # Suppress SSL depth message
           clnt.ssl_config.verify_callback = proc { |ok, ctx|; true }
 
@@ -531,6 +537,9 @@ module VagrantPlugins
           # Create a new HTTP client
           clnt = HTTPClient.new
 
+          # Set SSL proto to TLSv1
+          clnt.ssl_config.ssl_version = :TLSv1
+          
           # Suppress SSL depth message
           clnt.ssl_config.verify_callback = proc { |ok, ctx|; true }
 
