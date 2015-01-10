@@ -1,4 +1,4 @@
-[Vagrant](http://www.vagrantup.com) provider for [VMware vCloud Air®](http://vcloud.vmware.com) [![Gem Version](https://badge.fury.io/rb/vagrant-vcloudair.svg)](http://badge.fury.io/rb/vagrant-vcloudair)
+[Vagrant](http://www.vagrantup.com) provider for [VMware vCloud Air®](http://vcloud.vmware.com) [![Gem Version](https://badge.fury.io/rb/vagrant-vcloudair.svg)](http://badge.fury.io/rb/vagrant-vcloudair) [![Code Climate](https://codeclimate.com/github/gosddc/vagrant-vcloudair/badges/gpa.svg)](https://codeclimate.com/github/gosddc/vagrant-vcloudair)
 =============
 
 ### Version 0.5.0 doesn't work with Vagrant 1.6.5+, please upgrade to v0.5.1 (see upgrade instructions below)
