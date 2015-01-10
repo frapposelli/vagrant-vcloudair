@@ -54,7 +54,7 @@ module Vagrant
     def get_vapp_id
       vappid_file = @data_dir.join('../../../vcloudair_vappid')
       if vappid_file.file?
-        @vappid = vappid_file.read
+        @vappid = vappid_file.read.chomp
       else
         nil
       end
