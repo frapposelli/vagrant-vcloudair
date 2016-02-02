@@ -124,10 +124,11 @@ module VagrantPlugins
           # Instantiate the proper version driver for vCloud Air
           @logger.debug("Finding driver for vCloud Air version: #{@version}")
           driver_map   = {
-            '5.1' => Version_5_1,
-            '5.5' => Version_5_1,
-            '5.6' => Version_5_1,
-            '5.7' => Version_5_1
+            '5.1'  => Version_5_1,
+            '5.5'  => Version_5_1,
+            '5.6'  => Version_5_1,
+            '5.7'  => Version_5_1,
+            '11.0' => Version_5_1
           }
 
           if @version.start_with?('0.9') ||
