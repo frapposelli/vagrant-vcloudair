@@ -91,5 +91,3 @@ What is still missing:
 - TEST SUITES! (working on that).
 - Permission checks, make sure you have at least Catalog Admin privileges if you want to upload boxes to vCloud.
 - Some spaghetti code here and there.
-
-If you're a developer and want to lend us a hand, head over to our `develop` branch and send us PRs!
